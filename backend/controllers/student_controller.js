@@ -4,34 +4,50 @@ const Subject = require('../models/subjectSchema.js');
 
 const studentRegister = async (req, res) => {
     try {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPass = await bcrypt.hash(req.body.password, salt);
+        // Validate required fields
+        const { rollNum, password, school, sclassName, fullName, studentTel, parentName, parentTel, dateOfBirth, currentAddress } = req.body;
 
+        if (!rollNum || !password || !school || !sclassName || !fullName || !studentTel || !parentName || !parentTel || !dateOfBirth || !currentAddress) {
+            return res.status(400).send({ message: 'Please provide all required fields' });
+        }
+
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPass = await bcrypt.hash(password, salt);
+
+        // Check if the student with the same roll number already exists in the same class and school
         const existingStudent = await Student.findOne({
             rollNum: req.body.rollNum,
-            school: req.body.adminID,
+            school: req.body.school,
             sclassName: req.body.sclassName,
         });
 
         if (existingStudent) {
-            res.send({ message: 'Roll Number already exists' });
+            return res.status(400).send({ message: 'Roll Number already exists' });
         }
-        else {
-            const student = new Student({
-                ...req.body,
-                school: req.body.adminID,
-                password: hashedPass
-            });
 
-            let result = await student.save();
+        // Create new student object
+        const student = new Student({
+            ...req.body,                // Spread the request body fields
+            school: school,            // Use 'school' instead of 'adminID'
+            password: hashedPass        // Use hashed password
+        });
 
-            result.password = undefined;
-            res.send(result);
-        }
+        // Save the new student
+        let result = await student.save();
+
+        // Remove the password from the response
+        result.password = undefined;
+
+        // Send the result back
+        res.status(201).send(result);
     } catch (err) {
-        res.status(500).json(err);
+        // Handle server error
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
+
+
 
 const studentLogIn = async (req, res) => {
     try {
