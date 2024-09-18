@@ -5,15 +5,15 @@ const studentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    studentTel: { // New field added for the student's studentTel
+    studentTel: {
         type: String,
         required: true
     },
-    parentName: { // New field added for the student's parentName
+    parentName: {
         type: String,
         required: true
     },
-    parentTel: { // New field added for the student's parentTel
+    parentTel: {
         type: String,
         required: true
     },
@@ -28,63 +28,32 @@ const studentSchema = new mongoose.Schema({
     sclassName: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'sclass',
-        required: true,
+        required: true
     },
     school: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'admin',
-        required: true,
+        required: true
     },
     role: {
         type: String,
         default: "Student"
     },
-    examResult: [
-        {
-            subName: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'subject',
-            },
-            marksObtained: {
-                type: Number,
-                default: 0
-            }
-        }
-    ],
-    attendance: [{
-        date: {
-            type: Date,
-            required: true
-        },
-        status: {
-            type: String,
-            enum: ['Present', 'Absent'],
-            required: true
-        },
-        subName: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'subject',
-            required: true
-        }
-    }],
-    transferStatus: { // New field added for the student's transferStatus
+    transferStatus: {
         type: String,
         enum: ['New', 'Transfer'],
+        default: 'New',
         required: true
     },
-    previousSchoolName: { // New field added for the student's  previousSchoolName
-        type: String,
-        required: function() { return this.transferStatus === 'Transfer'; }
-    },
-    dateOfBirth: { // New field added for the student's dateOfBirth
+    dateOfBirth: {
         type: Date,
         required: true
     },
-    placeOfBirth: { // New field added for the student's placeOfBirth
+    placeOfBirth: {
         type: String,
         required: true
     },
-    currentAddress: {  // New field added for the student's current address
+    currentAddress: {
         type: String,
         required: true
     }
