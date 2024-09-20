@@ -56,7 +56,35 @@ const studentSchema = new mongoose.Schema({
     currentAddress: {
         type: String,
         required: true
-    }
+    },
+    examResult: [
+        {
+            subName: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'subject',
+            },
+            marksObtained: {
+                type: Number,
+                default: 0
+            }
+        }
+    ],
+    attendance: [{
+        date: {
+            type: Date,
+            required: true
+        },
+        status: {
+            type: String,
+            enum: ['Present', 'Absent'],
+            required: true
+        },
+        subName: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'subject',
+            required: true
+        }
+    }]
 }, {timestamps: true});
 
 module.exports = mongoose.model("student", studentSchema);
